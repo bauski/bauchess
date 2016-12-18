@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #222229;
+}
+
+@media (min-width: 800px) {
+    .container {
+        width: 800px;
+        margin: 0 auto;
+    }
+}
