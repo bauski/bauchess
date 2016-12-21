@@ -29,23 +29,23 @@
                 // do not pick up pieces if the game is over
                 // only pick up pieces for the side to move
                 var onDragStart = function(source, piece, position, orientation) {
-                if (game.game_over() === true ||
-                  (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                  (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                return false;
-                }
+                    if (game.game_over() === true || (game.turn() === 'w' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                        return false;
+                    }
                 };
 
                 var onDrop = function(source, target) {
-                // see if the move is legal
-                var move = game.move({
-                from: source,
-                to: target,
-                promotion: 'q' // NOTE: always promote to a queen for example simplicity
+                    // see if the move is legal
+                    var move = game.move({
+                    from: source,
+                    to: target,
+                    promotion: 'q' // NOTE: always promote to a queen for example simplicity
                 });
 
                 // illegal move
-                if (move === null) return 'snapback';
+                if (move === null) {
+                    return 'snapback';
+                }
 
                 updateStatus();
                 };
@@ -53,48 +53,44 @@
                 // update the board position after the piece snap
                 // for castling, en passant, pawn promotion
                 var onSnapEnd = function() {
-                board.position(game.fen());
+                    board.position(game.fen());
                 };
 
                 var updateStatus = function() {
-                var status = '';
+                    var status = '';
 
-                var moveColor = 'White';
-                if (game.turn() === 'b') {
-                moveColor = 'Black';
-                }
+                    var moveColor = 'White';
+                    if (game.turn() === 'b') {
+                        moveColor = 'Black';
+                    }
 
-                // checkmate?
-                if (game.in_checkmate() === true) {
-                status = 'Game over, ' + moveColor + ' is in checkmate.';
-                }
+                    // if game is checkmate
+                    if (game.in_checkmate() === true) {
+                        status = 'Game over, ' + moveColor + ' is in checkmate.';
+                    // else if game is draw
+                    } else if (game.in_draw() === true) {
+                        status = 'Game over, drawn position';
+                    // else game is going
+                    } else {
+                        status = moveColor + ' to move';
+                        // check?
+                        if (game.in_check() === true) {
+                          status += ', ' + moveColor + ' is in check';
+                        }
+                    }
 
-                // draw?
-                else if (game.in_draw() === true) {
-                status = 'Game over, drawn position';
-                }
-
-                // game still on
-                else {
-                status = moveColor + ' to move';
-
-                // check?
-                if (game.in_check() === true) {
-                  status += ', ' + moveColor + ' is in check';
-                }
-                }
-
-                statusEl.html(status);
-                fenEl.html(game.fen());
-                pgnEl.html(game.pgn());
+                    statusEl.html(status);
+                    fenEl.val(game.fen());
+                    pgnEl.val(game.pgn());
                 };
 
                 var cfg = {
-                draggable: true,
-                position: 'start',
-                onDragStart: onDragStart,
-                onDrop: onDrop,
-                onSnapEnd: onSnapEnd
+                    draggable: true,
+                    position: 'start',
+                    onDragStart: onDragStart,
+                    onDrop: onDrop,
+                    onSnapEnd: onSnapEnd,
+                    position: '6k1/p1b3p1/4p2r/1Pp4b/3pPp1q/1P1P1P2/2P1QR2/R5KN b - - 0 1'
                 };
                 board = ChessBoard('board', cfg);
 
@@ -106,17 +102,39 @@
         </script>
     </head>
     <body>
-        <div class="container">
-            <div class="filters">
-                <label>
-                    Tags:
-                </label>
-                <input type="text">
+        <div class="nav">
+            <div class="container">
+                <a href="#">
+                    Login
+                </a>
+                <a href="#">
+                    Puzzle Search
+                </a>
+                <a href="#">
+                    Puzzle Sets
+                </a>
             </div>
-            <div id="board"></div>
-            <p>Status: <span id="status"></span></p>
-            <p>FEN: <span id="fen"></span></p>
-            <p>PGN: <span id="pgn"></span></p>
+        </div>
+        <div class="main">
+            <div class="container">
+                <h1>
+                    Puzzle #1
+                </h1>
+                <div id="status"></div>
+                <div id="board"></div>
+                <div class="fen">
+                    <input id="fen"></input>
+                </div>
+                <button>
+                    Give Up
+                </button>
+                <button>
+                    Reset
+                </button>
+                <button>
+                    Next
+                </button>
+            </div>
         </div>
     </body>
 </html>
